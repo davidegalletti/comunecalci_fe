@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Segnalazioni Comune di Calci (PI)</title>
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% load mapbox_location_field_tags %}
+    {% location_field_includes %}
+    {% include_jquery %}
+
+</head>
+<body>
+<div class="container">
+    <h1 align="center" class="display-3 bg-info text-light">Comune di Calci</h1>
+    {% bootstrap_messages %}
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

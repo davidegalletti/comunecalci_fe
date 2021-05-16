@@ -7,6 +7,11 @@ name = "pypi"
 
 [packages]
 django = "*"
+mysqlclient = "*"
+django-simple-captcha = "*"
+django-crispy-forms = "*"
+"django-bootstrap4" = "*"
+django-mapbox-location-field = "*"
 
 [requires]
 python_version = "3.9"
