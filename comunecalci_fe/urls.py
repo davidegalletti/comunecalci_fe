@@ -19,8 +19,11 @@ from segnala import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.AddPlaceView.as_view(), name="home"),
-    path('s/<int:s_id>', views.thank_you, name='s'),
-    path("l", views.PlaceView.as_view(), name="index"),
+    path('d', views.Debug.as_view(), name='d'),
+    path('', views.AddSegnalazioneView.as_view(), name="home"),
+    path('v/<int:id>/<str:t>', views.ValidazioneEmail.as_view(), name='v'),
+    path('i', views.serve_image.as_view(), name='i'),
+    path('s/<int:id>/<str:t>', views.VediSegnalazione.as_view(), name='s'),
     path('captcha/', include('captcha.urls')),
 ]
+handler404 = 'segnala.views.page_not_found'

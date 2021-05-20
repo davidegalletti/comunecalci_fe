@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
                 ('redmine_id', models.PositiveIntegerField(blank=True, db_index=True, null=True)),
                 ('nome', models.CharField(max_length=100)),
                 ('cognome', models.CharField(max_length=100)),
-                ('token', models.CharField(db_index=True, max_length=100)),
+                ('token_validazione', models.CharField(db_index=True, max_length=100)),
                 ('email', models.EmailField(max_length=254)),
                 ('email_tentativo', models.IntegerField(default=0)),
                 ('email_validato', models.BooleanField(default=False)),

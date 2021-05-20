@@ -21,7 +21,7 @@ class SegnalaForm(forms.Form):
     to_date = forms.DateField(required=False, label=_("Born to"))
 
     def __init__(self, *args, **kwargs):
-        super(SearchForm, self).__init__(*args, **kwargs)
+        super(SegnalaForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
         self.helper.form_class = 'form-inline'
         self.helper.form_tag = True
