@@ -1,5 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
+# distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt
+#
+# Author: Davide Galletti                davide   ( at )   c4k.it
+
+
 from django.urls import reverse
 from django import forms
 from django.conf import settings
@@ -37,6 +43,10 @@ class AddSegnalazioneView(SuccessMessageMixin, CreateView):
     def get_success_message(self, cleaned_data):
         return '''La tua segnalazione è stata registrata correttamente. Riceverai un email all'indirizzo "%s". 
             Per completare la segnalazione segui le istruzioni contenute nell'email.''' % self.object.email
+
+    def get_context_data(self, **kwargs):
+        context = super(AddSegnalazioneView, self).get_context_data(**kwargs)
+        context.update({'versione': settings.versio})
 
 
 class ValidazioneEmail(TemplateView):

@@ -1,5 +1,8 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+# Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
+# distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt
+#
+# Author: Davide Galletti                davide   ( at )   c4k.it
 
 
 # noinspection PyCompatibility
@@ -97,7 +100,7 @@ class Segnalazione(TimeStampedModel):
             redmine_project = redmine.project.get(settings.REDMINE_PROJECT)
             red_issue = redmine.issue.create(
                 subject = self.titolo,
-                description = '%s !%s!' % (self.testo, self.foto_url),
+                description = '%s\n !%s!' % (self.testo, self.foto_url),
                 category_id = self.categoria.redmine_id,
                 custom_fields = [
                     {'id': 1, 'value': self.nome},
