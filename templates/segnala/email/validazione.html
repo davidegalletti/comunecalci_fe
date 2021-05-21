@@ -1,0 +1,17 @@
+{% comment %}
+# Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
+# distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt
+#
+# Author: Davide Galletti                davide   ( at )   c4k.it
+{% endcomment %}
+<p>Gentile {{ segnalazione.nome }} {{ segnalazione.cognome }},</p>
+<p></p>
+<p>è stata registrata una segnalazione presso il sito del comune di Calci (PI) con questo indirizzo di e-mail.</p>
+<p>Se non hai fatto tu la segnalazione puoi semplicemente ignorare questo messaggio.</p>
+<p></p>
+<p>Per completare la segnalazione è necessario validare il tuo indirizzo di e-mail usando il seguente collegamento.</p>
+<p></p>
+<p><a href="http://{{ http_host }}{% url "v" segnalazione.id segnalazione.token_validazione %}">Fai clic qui per validare il messaggio.</a></p>
+<p></p>
+<p>Cordiali saluti</p>
+

@@ -1,0 +1,61 @@
+{% comment %}
+# Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
+# distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt
+#
+# Author: Davide Galletti                davide   ( at )   c4k.it
+{% endcomment %}
+{% load static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}">
+    <head>
+        <meta charset="utf-8" />
+        <title>{% block head_title_base %}{% if SITE_NAME %}{{ SITE_NAME }} | {% endif %}{% block head_title %}{% endblock %}{% endblock %}</title>
+        {% block viewport %}
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        {% endblock %}
+
+        {% block styles %}{% endblock %}
+
+        {% block extra_head_base %}
+            {% block extra_head %}{% endblock %}
+        {% endblock %}
+    </head>
+    <body class="">
+        <div class="{% block wrapper_class %}{% endblock %}">
+            {% block header_base %}
+                <header>
+                    <div class="container">
+                        {% block header %}HEADER{% endblock %}
+                    </div>
+                </header>
+            {% endblock %}
+
+            {% block body_base %}
+                <section id="content_body">
+                    <div class="container">
+                        {% for message in messages %}
+                            <div class="">
+                                {{ message }}
+                            </div>
+                        {% endfor %}
+
+                        {% block body %}
+                        {% endblock %}
+                    </div>
+                </section>
+            {% endblock %}
+
+            {% block footer_base %}
+                <hr />
+                <footer>
+                    <div class="container">
+                        {% block footer %}FOOTER{% endblock %}
+                    </div>
+                </footer>
+            {% endblock %}
+        </div>
+
+        {% block scripts %}{% endblock %}
+
+    </body>
+</html>

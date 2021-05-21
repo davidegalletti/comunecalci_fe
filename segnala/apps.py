@@ -5,10 +5,9 @@
 # Author: Davide Galletti                davide   ( at )   c4k.it
 
 
-import os
+from django.apps import AppConfig
 
-from django.core.asgi import get_asgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'comunecalci_fe.settings')
-
-application = get_asgi_application()
+class SegnalaConfig(AppConfig):
+    default_auto_field = 'django.db.models.BigAutoField'
+    name = 'segnala'

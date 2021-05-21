@@ -1,0 +1,17 @@
+{% comment %}
+# Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
+# distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt
+#
+# Author: Davide Galletti                davide   ( at )   c4k.it
+{% endcomment %}
+{% extends "segnala/core.html" %}
+{% load bootstrap4 %}
+{% block content %}
+    <h2 align="center" class="display-5">Invia una segnalazione</h2>
+    <form enctype="multipart/form-data" method="post">
+        {% csrf_token %}
+        {% bootstrap_form form %}
+        <input class="btn btn-primary text-light btn-lg" type="submit" value="submit">
+    </form>
+    {{ form.media }}
+{% endblock %}

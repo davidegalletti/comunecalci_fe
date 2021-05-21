@@ -1,14 +1,12 @@
-# -*- coding: utf-8 -*-
+{% comment %}
 # Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
 # distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt
 #
 # Author: Davide Galletti                davide   ( at )   c4k.it
-
-
-import os
-
-from django.core.asgi import get_asgi_application
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'comunecalci_fe.settings')
-
-application = get_asgi_application()
+{% endcomment %}
+{% extends "segnala/core.html" %}
+{% load bootstrap4 %}
+{% block content %}
+    <h2 align="center" class="display-5">La richiesta che hai inviato ha causato un errore.</h2>
+    <h3>{{ exception }}</h3>
+{% endblock %}

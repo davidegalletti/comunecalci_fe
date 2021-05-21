@@ -1,0 +1,27 @@
+{% comment %}
+# Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
+# distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt
+#
+# Author: Davide Galletti                davide   ( at )   c4k.it
+{% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Segnalazioni Comune di Calci (PI)</title>
+    {% load bootstrap4 %}
+    {% bootstrap_css %}
+    {% load mapbox_location_field_tags %}
+    {% location_field_includes %}
+    {% include_jquery %}
+
+</head>
+<body>
+<div class="container">
+    <h1 align="center" class="display-3 bg-info text-light">Comune di Calci</h1>
+    {% bootstrap_messages %}
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

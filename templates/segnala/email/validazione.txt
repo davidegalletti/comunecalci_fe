@@ -1,0 +1,10 @@
+Gentile {{ self.nome }} {{ self.cognome }},
+
+è stata registrata una segnalazione presso il sito del comune di Calci (PI) con questo indirizzo di e-mail.
+Se non hai fatto tu la segnalazione puoi semplicemente ignorare questo messaggio.
+
+Per completare la segnalazione è necessario validare il tuo indirizzo di e-mail usando il seguente collegamento.
+
+http://{{ http_host }}{% url "v" segnalazione.id segnalazione.token_validazione %}
+
+Cordiali saluti

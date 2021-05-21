@@ -5,10 +5,6 @@
 # Author: Davide Galletti                davide   ( at )   c4k.it
 
 
-import os
+from django.contrib import admin
 
-from django.core.asgi import get_asgi_application
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'comunecalci_fe.settings')
-
-application = get_asgi_application()
+from .models import Aggiornamento, Categoria, Segnalazione

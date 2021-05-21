@@ -1,0 +1,18 @@
+{% comment %}
+# Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
+# distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt
+#
+# Author: Davide Galletti                davide   ( at )   c4k.it
+{% endcomment %}
+{% extends "segnala/core.html" %}
+{% block content %}
+    <a class="btn btn-success text-ligt btn-lg btn-block" href="{% url 'add' %}">ADD NEW PLACE</a>
+    <h2 class="display-5">Places:</h2>
+    {% for place in object_list %}
+        <div class="row" style="margin:5px;">
+            <div class="col"> {{ place.location}}</div>
+            <div class="col"> {{ place.address}}</div>
+            <div class="col"><a href="{% url "change" place.id %}" class="btn btn-secondary">CHANGE</a></div>
+        </div>
+    {% endfor %}
+{% endblock %}

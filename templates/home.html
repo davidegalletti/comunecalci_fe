@@ -1,14 +1,10 @@
-# -*- coding: utf-8 -*-
+{% comment %}
 # Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
 # distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt
 #
 # Author: Davide Galletti                davide   ( at )   c4k.it
+{% endcomment %}
+{% extends "site_base.html" %}
 
-
-import os
-
-from django.core.asgi import get_asgi_application
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'comunecalci_fe.settings')
-
-application = get_asgi_application()
+{% block body %}
+{% endblock %}
