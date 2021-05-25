@@ -5,6 +5,6 @@ Se non hai fatto tu la segnalazione puoi semplicemente ignorare questo messaggio
 
 Per completare la segnalazione è necessario validare il tuo indirizzo di e-mail usando il seguente collegamento.
 
-http://{{ http_host }}{% url "v" segnalazione.id segnalazione.token_validazione %}
+{{ http_host }}{% url "v" segnalazione.id segnalazione.token_validazione %}
 
 Cordiali saluti
