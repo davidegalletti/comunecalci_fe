@@ -23,7 +23,3 @@ MAPBOX_KEY = '******************************************************************
 REDMINE_ENDPOINT = 'https://segnalazioni.comune.calci.pi.it'
 REDMINE_VERSION = '4.1.1'
 REDMINE_KEY = '************************************************************'
-
-
-
-
