@@ -13,6 +13,7 @@ django-crispy-forms = "*"
 "django-bootstrap4" = "*"
 django-mapbox-location-field = "*"
 python-redmine = "*"
+uwsgi = "*"
 
 [requires]
 python_version = "3.7"
