@@ -24,7 +24,7 @@ class SegnalazioneForm(forms.ModelForm):
 
     class Meta:
         model = Segnalazione
-        fields = ("nome", "cognome", "email", "cellulare", "titolo", "categoria", "testo", "location", "address", "foto")
+        fields = ("categoria", "nome", "cognome", "email", "cellulare", "titolo", "testo", "location", "address", "foto")
         #widgets = {'myfield1': forms.TextInput(attrs={'class': 'myfieldclass'}),}
 
     class Media:
@@ -46,7 +46,8 @@ class AddSegnalazioneView(SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddSegnalazioneView, self).get_context_data(**kwargs)
-        context.update({'versione': settings.versio})
+        context.update({'versione': settings.VERSIONE})
+        return context
 
 
 class ValidazioneEmail(TemplateView):

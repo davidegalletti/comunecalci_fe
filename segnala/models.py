@@ -62,12 +62,12 @@ class Segnalazione(TimeStampedModel):
     location = LocationField(verbose_name='Posizione ed indirizzo',
         map_attrs={"style": "mapbox://styles/mightysharky/cjwgnjzr004bu1dnpw8kzxa72",
                    "placeholder": "Seleziona la posizione nella mappa.",
-                   "center": (10.515822538661212, 43.72580949521296)})
-    address = AddressAutoHiddenField()
+                   "center": (10.515822538661212, 43.72580949521296)}, blank=True, null=True)
+    address = AddressAutoHiddenField(blank=True, null=True)
     titolo = models.CharField(max_length=100)
     testo = models.TextField()
     foto = models.ImageField(upload_to='foto/%Y/%m/%d/', blank=True, null=True)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE)
+    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, help_text='Seleziona la categoria e poi inserisci gli altri dati.')
     # https://docs.djangoproject.com/en/3.2/releases/3.1/#jsonfield-for-all-supported-database-backends
     extra_data = models.JSONField(blank=True, null=True)
 
@@ -100,14 +100,14 @@ class Segnalazione(TimeStampedModel):
             redmine_project = redmine.project.get(settings.REDMINE_PROJECT)
             red_issue = redmine.issue.create(
                 subject = self.titolo,
-                description = '%s\n !%s!' % (self.testo, self.foto_url),
+                description = '%s\n\n%s\n !%s!' % (self.testo, ('%s\n\n' % self.tag_mappa), self.foto_url),
                 category_id = self.categoria.redmine_id,
                 custom_fields = [
                     {'id': 1, 'value': self.nome},
                     {'id': 2, 'value': self.cognome},
                     {'id': 3, 'value': 'id=%s&t=%s' % (self.id, self.token_foto)},
-                    {'id': 4, 'value': self.location[0]},
-                    {'id': 5, 'value': self.location[1]},
+                    {'id': 4, 'value': (self.location[0] if self.location else '')},
+                    {'id': 5, 'value': (self.location[1] if self.location else '')},
                     {'id': 6, 'value': self.address},
                     {'id': 7, 'value': self.cellulare}
                 ],
@@ -118,6 +118,13 @@ class Segnalazione(TimeStampedModel):
 
         except:
             pass # TODO: loggare
+
+    @property
+    def tag_mappa(self):
+        if self.location:
+            return '{{leaflet_map(%s, %s, 17)}}\n{{leaflet_marker(%s, %s, %s)}}' % \
+                   (self.location[1], self.location[0], self.location[1], self.location[0], self.titolo)
+        return ''
 
     @property
     def foto_url(self):
