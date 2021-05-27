@@ -5,6 +5,7 @@
 #
 # Author: Davide Galletti                davide   ( at )   c4k.it
 
+import logging
 
 from django.urls import reverse
 from django import forms
@@ -13,14 +14,15 @@ from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
-from django.template import RequestContext
 from django.views.generic import CreateView, View, TemplateView
-from .models import Segnalazione
+from segnala.models import Segnalazione
 from captcha.fields import CaptchaField
+
+logger = logging.getLogger('segnala')
 
 
 class SegnalazioneForm(forms.ModelForm):
-    captcha = CaptchaField(label="Digita i caratteri nell'immagine seguente: ")
+    captcha = CaptchaField(label="Digita i caratteri nell'immagine: ")
 
     class Meta:
         model = Segnalazione
@@ -59,7 +61,8 @@ class ValidazioneEmail(TemplateView):
         token_validazione = kwargs['t']
         try:
             segnalazione = Segnalazione.objects.get(id = s_id)
-        except:
+        except Exception as ex:
+            logger.warning('Tentativo di validare email con parametro id segnalazione errat %s: %s' % (s_id, str(ex)))
             raise Http404("Accesso non autorizzato")
         if segnalazione.token_validazione == token_validazione:
             if segnalazione.stato == 'EMAIL_VALIDATO':
@@ -68,9 +71,9 @@ class ValidazioneEmail(TemplateView):
                 messages.add_message(self.request, messages.SUCCESS, 'Il tuo indirizzo di email è stato validato! Verrai contattato in merito alla segnalazione fatta.')
                 segnalazione.stato = 'EMAIL_VALIDATO'
                 segnalazione.save()
-
-            # TODO: introdurre un limite di ore per la validazione
+            # TODO: vogliamo introdurre un limite di ore per la validazione?
         else:
+            logger.warning('Tentativo di validare email con parametro token segnalazione errato %s' % token_validazione)
             raise Http404("Accesso non autorizzato")
         context.update({'segnalazione': segnalazione})
         return context
@@ -100,21 +103,16 @@ def page_not_found(request, exception):
 class Debug(View):
     def get(self, request):
         try:
-            Segnalazione.cron_notifiche()
-            Segnalazione.cron_crea_redmine()
-            return HttpResponse('cron ok')
+            if 'HTTP_X_FORWARDED_FOR' in request.META:
+                logger.warning('Invocata view debug HTTP_X_FORWARDED_FOR %s' % request.META['HTTP_X_FORWARDED_FOR'])
+            if 'REMOTE_ADDR' in request.META:
+                logger.warning('Invocata view debug REMOTE_ADDR %s' % request.META['REMOTE_ADDR'])
+            return HttpResponse('debug')
+            # Segnalazione.cron_notifiche()
+            # bSegnalazione.cron_crea_redmine()
         except Exception as ex:
-            return HttpResponse('Errore cron: %s' % str(ex))
-
-
-class Cron(View):
-    def get(self, request):
-        try:
-            Segnalazione.cron_notifiche()
-            Segnalazione.cron_crea_redmine()
-            return HttpResponse('cron ok')
-        except Exception as ex:
-            return HttpResponse('Errore cron: %s' % str(ex))
+            logger.error('Errore view debug: %s' % str(ex))
+            return HttpResponse('Errore view debug: %s' % str(ex))
 
 
 class serve_image(View):
@@ -126,7 +124,6 @@ class serve_image(View):
         except:
             raise Http404("Accesso non autorizzato")
 
-        # with open('../filesystem_istrumentum/' + folder_notaio + '/' + subfolder01 + '/' + subfolder02 + '/tmp/' + ned_uuid + '/' + filename, 'rb') as pdf:
         with open('%s/%s%s' % (settings.BASE_DIR, settings.MEDIA_ROOT, segnalazione.foto.url[1:]), 'rb') as img:
             response = HttpResponse(img.read())
             response['Content-Type'] = 'image/jpeg'

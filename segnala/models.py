@@ -4,7 +4,7 @@
 #
 # Author: Davide Galletti                davide   ( at )   c4k.it
 
-
+import logging
 # noinspection PyCompatibility
 from secrets import token_hex
 from django.conf import settings
@@ -15,6 +15,8 @@ from mapbox_location_field.models import LocationField, AddressAutoHiddenField
 from .utils import EmailSender
 from redminelib import Redmine
 
+logger_cron = logging.getLogger('cron')
+logger = logging.getLogger('segnala')
 
 class TimeStampedModel(models.Model):
     """An abstract base class model that provides self-updating ``created`` and ``modified`` fields."""
@@ -28,6 +30,9 @@ class TimeStampedModel(models.Model):
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
     redmine_id = models.PositiveIntegerField(db_index=True, blank=True, null=True)
+
+    class Meta:
+        verbose_name_plural = 'Categorie'
 
     def __str__(self):
         return self.nome
@@ -71,6 +76,14 @@ class Segnalazione(TimeStampedModel):
     # https://docs.djangoproject.com/en/3.2/releases/3.1/#jsonfield-for-all-supported-database-backends
     extra_data = models.JSONField(blank=True, null=True)
 
+    class Meta:
+        verbose_name_plural = 'Segnalazioni'
+
+    def __str__(self):
+        return 'Segnalazione del %s, stato %s, inviata da %s %s: "%s"' % (self.created, self.stato,
+                                                                          ('%s %s' % (self.nome, self.cognome)),
+                                                                          self.email, self.titolo)
+
     def save(self, force_insert=False, force_update=False, using=None, update_fields=None):
         if not self.id:
             self.token_validazione = token_hex(settings.TOKEN_LENGTH)
@@ -89,9 +102,14 @@ class Segnalazione(TimeStampedModel):
             es.send_mail(self.email, 'Comune di Calci, segnalazione %s' % self.id, context)
             self.stato = 'EMAIL_INVIATO'
             self.save()
-        except:
+        except Exception as ex:
             if self.email_tentativo > settings.MAX_EMAIL_ATTEMPTS:
                 self.stato = 'EMAIL_FALLITO'
+                logger_cron.warning('Superato in massimo numero di tentativi (%s) di invio email per la segnalazione %s'
+                                ' all\'indirizzo %s: %s' % (settings.MAX_EMAIL_ATTEMPTS,
+                                                            self.id,
+                                                            self.email,
+                                                            str(ex)) )
             self.save()
 
     def crea_in_redmine(self):
@@ -115,9 +133,8 @@ class Segnalazione(TimeStampedModel):
             self.stato = 'CREATO_IN_REDMINE'
             self.redmine_id = red_issue.id
             self.save()
-
-        except:
-            pass # TODO: loggare
+        except Exception as ex:
+            logger_cron.error('Errore creando in redmine la segnalazione %s: %s' % (self.id, str(ex)) )
 
     @property
     def tag_mappa(self):
