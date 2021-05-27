@@ -6,13 +6,13 @@
 
 
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.urls import path, include
 from segnala import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('d', views.Debug.as_view(), name='d'),
-    path('c', views.Cron.as_view(), name='c'),
+    path('d', login_required(views.Debug.as_view()), name='d'),
     path('', views.AddSegnalazioneView.as_view(), name="home"),
     path('v/<int:id>/<str:t>', views.ValidazioneEmail.as_view(), name='v'),
     path('i', views.serve_image.as_view(), name='i'),

@@ -7,4 +7,17 @@
 
 from django.contrib import admin
 
-from .models import Aggiornamento, Categoria, Segnalazione
+from segnala.models import Categoria, Segnalazione
+
+
+class AdminSite(admin.AdminSite):
+    site_header = 'Front-end segnalazioni Comune di Calci (PI)'
+    site_title = 'Front-end segnalazioni Comune di Calci (PI)'
+
+
+admin_site = AdminSite(name='admin')
+admin_site.register(Categoria)
+admin_site.register(Segnalazione)
+
+admin.site.register(Categoria)
+admin.site.register(Segnalazione)

@@ -10,12 +10,13 @@ import logging
 from segnala.models import Segnalazione
 from django.core.management.base import BaseCommand
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('cron')
 
 
 def cron():
     try:
         Segnalazione.cron_notifiche()
+        Segnalazione.cron_crea_redmine()
     except Exception as ex:
         logger.error("cron: %s" % str(ex))
 
@@ -25,6 +26,8 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         try:
+            logger.info('INIZIO CRON')
             cron()
+            logger.info('FINE CRON')
         except Exception as ex:
             logger.error("Cron: %s" % str(ex))
