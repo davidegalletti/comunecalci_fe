@@ -126,6 +126,7 @@ EMAIL_FROM_ADDRESS = 'no_reply@comune.calci.pi.it'
 MAX_EMAIL_ATTEMPTS = 3
 EMAIL_HOST = keep_safe.EMAIL_HOST
 EMAIL_PORT = keep_safe.EMAIL_PORT
+EMAIL_USE_TLS = keep_safe.EMAIL_USE_TLS
 EMAIL_HOST_USER = keep_safe.EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = keep_safe.EMAIL_HOST_PASSWORD
 HTTP_HOST = 'https://segnala.comune.calci.pi.it'
@@ -207,4 +208,4 @@ LOGGING = {
     }
 }
 
-VERSIONE = '0.3.0'
+VERSIONE = '0.3.1'
