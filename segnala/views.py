@@ -15,7 +15,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.http import Http404, HttpResponse
 from django.shortcuts import render
 from django.views.generic import CreateView, View, TemplateView
-from segnala.models import Segnalazione
+from segnala.models import Segnalazione, Categoria
 from captcha.fields import CaptchaField
 
 logger = logging.getLogger('segnala')
@@ -23,6 +23,10 @@ logger = logging.getLogger('segnala')
 
 class SegnalazioneForm(forms.ModelForm):
     captcha = CaptchaField(label="Digita i caratteri nell'immagine: ")
+
+    def __init__(self, *args, **kwargs):
+        super(SegnalazioneForm, self).__init__(*args, **kwargs)
+        self.fields['categoria'].queryset = Categoria.objects.filter(attiva=True)
 
     class Meta:
         model = Segnalazione
