@@ -4,20 +4,24 @@
 #
 # Author: Davide Galletti                davide   ( at )   c4k.it
 
+from admin_ordering.admin import OrderableAdmin
 
 from django.contrib import admin
-
 from segnala.models import Categoria, Segnalazione
+from mapbox_location_field.admin import MapAdmin
+
+class SegnalazioneAdmin(MapAdmin):
+    search_fields = ['nome', 'cognome', 'email', 'titolo', 'testo']
+    list_filter = ['categoria', 'stato']
 
 
-class AdminSite(admin.AdminSite):
-    site_header = 'Front-end segnalazioni Comune di Calci (PI)'
-    site_title = 'Front-end segnalazioni Comune di Calci (PI)'
+class CategoriaAdmin(OrderableAdmin, admin.ModelAdmin):
+    ordering_field = "ordine"
+    ordering_field_hide_input = True
+    list_display = ["nome", "ordine"]
+    list_editable = ["ordine"]
+    exclude = ['ordine']
 
 
-admin_site = AdminSite(name='admin')
-admin_site.register(Categoria)
-admin_site.register(Segnalazione)
-
-admin.site.register(Categoria)
-admin.site.register(Segnalazione)
+admin.site.register(Categoria, CategoriaAdmin)
+admin.site.register(Segnalazione, SegnalazioneAdmin)

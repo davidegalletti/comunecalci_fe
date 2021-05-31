@@ -30,15 +30,27 @@ class TimeStampedModel(models.Model):
 class Categoria(models.Model):
     nome = models.CharField(max_length=100)
     redmine_id = models.PositiveIntegerField(db_index=True, blank=True, null=True)
+    ordine = models.SmallIntegerField(default=0, db_index=True)
+    attiva = models.BooleanField(default=True)
+    testo_di_aiuto = models.CharField(max_length=300, help_text='NON ANCORA USATO', blank=True, null=True)
+
 
     class Meta:
         verbose_name_plural = 'Categorie'
+        ordering = ['ordine']
 
     def __str__(self):
         return self.nome
 
 
 class Segnalazione(TimeStampedModel):
+    STATO = (
+        ('INIZIALE', 'INIZIALE'),
+        ('EMAIL_FALLITO', 'EMAIL_FALLITO'),
+        ('EMAIL_INVIATO', 'EMAIL_INVIATO'),
+        ('EMAIL_VALIDATO', 'EMAIL_VALIDATO'),
+        ('CREATO_IN_REDMINE', 'CREATO_IN_REDMINE'),
+    )
     '''
         stati:
             INIZIALE: appena creata, va inviato l'email; potrebbe essere stato già fatto qualche tentativo di invio
@@ -61,7 +73,7 @@ class Segnalazione(TimeStampedModel):
     email = models.EmailField()
     email_tentativo = models.IntegerField(default=0)
     # quanti tentativi sono stati fatti di invio email
-    stato = models.CharField(max_length=50, default='INIZIALE')
+    stato = models.CharField(max_length=50, default='INIZIALE', choices=STATO)
 
     cellulare = models.CharField("Numero di cellulare", max_length=15)
     location = LocationField(verbose_name='Posizione ed indirizzo',

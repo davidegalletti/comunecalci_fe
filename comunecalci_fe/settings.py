@@ -34,7 +34,8 @@ INSTALLED_APPS = [
     'segnala.apps.SegnalaConfig',
     'mapbox_location_field',
     'bootstrap4',
-    'captcha'
+    'captcha',
+    'admin_ordering'
 ]
 
 MIDDLEWARE = [
@@ -208,4 +209,4 @@ LOGGING = {
     }
 }
 
-VERSIONE = '0.3.1'
+VERSIONE = '0.3.2'

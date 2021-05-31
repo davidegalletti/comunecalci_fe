@@ -14,6 +14,7 @@ django-crispy-forms = "*"
 django-mapbox-location-field = "*"
 python-redmine = "*"
 uwsgi = "*"
+django-admin-ordering = "*"
 
 [requires]
 python_version = "3.7"
