@@ -12,7 +12,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import CreateView, View, TemplateView
 from segnala.models import Segnalazione, Categoria
@@ -42,6 +42,14 @@ class AddSegnalazioneView(SuccessMessageMixin, CreateView):
     template_name = "segnala/place_form.html"
     success_message = 'La tua segnalazione è stata registrata correttamente. Riceverai un email all''indirizzo "%(email)". Per completare la segnalazione segui le istruzioni contenute nell''email.'
     form_class = SegnalazioneForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        # registro 'HTTP_X_FORWARDED_FOR' se disponibile
+        if 'HTTP_X_FORWARDED_FOR' in self.request.META:
+            self.object.extra_data = {'HTTP_X_FORWARDED_FOR': self.request.META['HTTP_X_FORWARDED_FOR']}
+            self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse('s', kwargs={'id': self.object.id, 't': self.object.token_lettura})
