@@ -115,6 +115,14 @@ def page_not_found(request, exception):
 class Debug(View):
     def get(self, request):
         try:
+            from .models import Notifica
+            Notifica.cron_carica_notifiche_aggiornamenti()
+            # from redminelib import Redmine
+            # redmine = Redmine(settings.REDMINE_ENDPOINT, key=settings.REDMINE_KEY, version=settings.REDMINE_VERSION)
+            # kw = {'cf_%s' % settings.REDMINE_CF_INVIARE_EMAIL: 1}
+            # i = redmine.issue.filter(**kw, include=['journals'])
+            # v = redmine.issue.filter(**kw)[0].custom_fields[0].value
+            # id = redmine.issue.filter(cf_1='0')[0].custom_fields[0].id
             if 'HTTP_X_FORWARDED_FOR' in request.META:
                 logger.warning('Invocata view debug HTTP_X_FORWARDED_FOR %s' % request.META['HTTP_X_FORWARDED_FOR'])
             if 'REMOTE_ADDR' in request.META:

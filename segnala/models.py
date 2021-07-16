@@ -162,7 +162,7 @@ class Segnalazione(TimeStampedModel):
         return ''
 
     @classmethod
-    def cron_notifiche(cls):
+    def cron_notifiche_validazione(cls):
         for s in Segnalazione.objects.filter(stato='INIZIALE', email_tentativo__lt=settings.MAX_EMAIL_ATTEMPTS):
             s.invia_email_validazione()
 
@@ -170,6 +170,77 @@ class Segnalazione(TimeStampedModel):
     def cron_crea_redmine(cls):
         for s in Segnalazione.objects.filter(stato='EMAIL_VALIDATO'):
             s.crea_in_redmine()
+
+
+class Notifica(TimeStampedModel):
+    STATO = (
+        ('INIZIALE', 'INIZIALE'),
+        ('EMAIL_FALLITO', 'EMAIL_FALLITO'),
+        ('EMAIL_INVIATO', 'EMAIL_INVIATO')
+    )
+    segnalazione = models.ForeignKey(Segnalazione, on_delete=models.CASCADE)
+    journal_id = models.IntegerField(db_index=True)
+    email_tentativo = models.IntegerField(default=0)
+    # quanti tentativi sono stati fatti di invio email
+    stato = models.CharField(max_length=50, default='INIZIALE', choices=STATO)
+    testo_da_inviare = models.TextField()
+
+    @classmethod
+    def cron_carica_notifiche_aggiornamenti(cls):
+        redmine = Redmine(settings.REDMINE_ENDPOINT, key=settings.REDMINE_KEY, version=settings.REDMINE_VERSION)
+        redmine_project = redmine.project.get(settings.REDMINE_PROJECT)
+        kw = {'cf_%s' % settings.REDMINE_CF_INVIARE_EMAIL: 1}
+        issues_con_notifiche = redmine.issue.filter(**kw, include=['journals'])
+        for issue in issues_con_notifiche:
+            for journal in issue.journals:
+                notifica_da_inviare = False
+                for detail in journal.details:
+                    if detail['property'] == 'cf' and detail['name'] == settings.REDMINE_CF_INVIA_LE_NOTE \
+                                                  and detail['new_value'] == '1':
+                        # è una modifica che setta a True il flag INVIA_LE_NOTE ?
+                        notifica_da_inviare = True
+                        break
+                if notifica_da_inviare:
+                    # se non è già registrata la creo
+                    if not Notifica.objects.filter(segnalazione__redmine_id=issue.id, journal_id=journal.id).exists():
+                        try:
+                            segnalazione = Segnalazione.objects.get(redmine_id=issue.id)
+                            n = Notifica.objects.filter(segnalazione=segnalazione,
+                                                        journal_id=journal.id,
+                                                        testo_da_inviare=journal.notes)
+                            n.save()
+                        except Exception as ex:
+                            logger.error('Errore cercando la segnalazione il cui id su redmine è %s: %s' %
+                                         (issue.id, str(ex)))
+            kw = {'id' : settings.REDMINE_CF_INVIARE_EMAIL, 'value': '0'}
+            issue.custom_fields=[kw]
+            issue.save()
+
+    @classmethod
+    def cron_notifiche_aggiornamenti(cls):
+        for s in Notifica.objects.filter(stato='INIZIALE', email_tentativo__lt=settings.MAX_EMAIL_ATTEMPTS):
+            s.invia_email_aggiornamento()
+
+    def invia_email_aggiornamento(self):
+        es = EmailSender('aggiornamento')
+        try:
+            context = {
+                'http_host': settings.HTTP_HOST,
+                'notifica': self
+            }
+            self.email_tentativo += 1
+            es.send_mail(self.segnalazione.email, 'Comune di Calci, segnalazione %s' % self.id, context)
+            self.stato = 'EMAIL_INVIATO'
+            self.save()
+        except Exception as ex:
+            if self.email_tentativo > settings.MAX_EMAIL_ATTEMPTS:
+                self.stato = 'EMAIL_FALLITO'
+                logger_cron.warning('Superato in massimo numero di tentativi (%s) di invio email per la segnalazione %s'
+                                ' all\'indirizzo %s: %s' % (settings.MAX_EMAIL_ATTEMPTS,
+                                                            self.id,
+                                                            self.segnalazione.email,
+                                                            str(ex)) )
+            self.save()
 
 
 class Aggiornamento(TimeStampedModel):
