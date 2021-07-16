@@ -207,7 +207,7 @@ class Notifica(TimeStampedModel):
                     if not Notifica.objects.filter(segnalazione__redmine_id=issue.id, journal_id=journal.id).exists():
                         try:
                             segnalazione = Segnalazione.objects.get(redmine_id=issue.id)
-                            n = Notifica.objects.filter(segnalazione=segnalazione,
+                            n = Notifica(segnalazione=segnalazione,
                                                         journal_id=journal.id,
                                                         testo_da_inviare=journal.notes)
                             n.save()
