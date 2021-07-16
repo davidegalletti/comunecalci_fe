@@ -187,10 +187,12 @@ class Notifica(TimeStampedModel):
 
     @classmethod
     def cron_carica_notifiche_aggiornamenti(cls):
+        logger_cron.info('Inizio cron_carica_notifiche_aggiornamenti')
         redmine = Redmine(settings.REDMINE_ENDPOINT, key=settings.REDMINE_KEY, version=settings.REDMINE_VERSION)
         redmine_project = redmine.project.get(settings.REDMINE_PROJECT)
         kw = {'cf_%s' % settings.REDMINE_CF_INVIARE_EMAIL: 1}
         issues_con_notifiche = redmine.issue.filter(**kw, include=['journals'])
+        logger_cron.info('len(issues_con_notifiche) %s' % len(issues_con_notifiche))
         for issue in issues_con_notifiche:
             for journal in issue.journals:
                 notifica_da_inviare = False
@@ -210,11 +212,12 @@ class Notifica(TimeStampedModel):
                                                         testo_da_inviare=journal.notes)
                             n.save()
                         except Exception as ex:
-                            logger.error('Errore cercando la segnalazione il cui id su redmine è %s: %s' %
+                            logger_cron.error('Errore cercando la segnalazione il cui id su redmine è %s: %s' %
                                          (issue.id, str(ex)))
             kw = {'id' : settings.REDMINE_CF_INVIARE_EMAIL, 'value': '0'}
             issue.custom_fields=[kw]
             issue.save()
+        logger_cron.info('Fine cron_carica_notifiche_aggiornamenti')
 
     @classmethod
     def cron_notifiche_aggiornamenti(cls):
@@ -241,6 +244,9 @@ class Notifica(TimeStampedModel):
                                                             self.segnalazione.email,
                                                             str(ex)) )
             self.save()
+
+    class Meta:
+        verbose_name_plural = 'Notifiche'
 
 
 class Aggiornamento(TimeStampedModel):
