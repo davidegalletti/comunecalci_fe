@@ -7,7 +7,7 @@
 
 import logging
 
-from segnala.models import Segnalazione
+from segnala.models import Segnalazione, Notifica
 from django.core.management.base import BaseCommand
 
 logger = logging.getLogger('cron')
@@ -15,10 +15,21 @@ logger = logging.getLogger('cron')
 
 def cron():
     try:
-        Segnalazione.cron_notifiche()
+        Segnalazione.cron_notifiche_validazione()
+    except Exception as ex:
+        logger.error("cron_notifiche_validazione: %s" % str(ex))
+    try:
+        Notifica.cron_carica_notifiche_aggiornamenti()
+    except Exception as ex:
+        logger.error("cron_carica_notifiche_aggiornamenti: %s" % str(ex))
+    try:
+        Notifica.cron_notifiche_aggiornamenti()
+    except Exception as ex:
+        logger.error("cron_notifiche_aggiornamenti: %s" % str(ex))
+    try:
         Segnalazione.cron_crea_redmine()
     except Exception as ex:
-        logger.error("cron: %s" % str(ex))
+        logger.error("cron_crea_redmine: %s" % str(ex))
 
 
 class Command(BaseCommand):

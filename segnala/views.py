@@ -12,7 +12,7 @@ from django import forms
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.messages.views import SuccessMessageMixin
-from django.http import Http404, HttpResponse
+from django.http import Http404, HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.views.generic import CreateView, View, TemplateView
 from segnala.models import Segnalazione, Categoria
@@ -42,6 +42,14 @@ class AddSegnalazioneView(SuccessMessageMixin, CreateView):
     template_name = "segnala/place_form.html"
     success_message = 'La tua segnalazione è stata registrata correttamente. Riceverai un email all''indirizzo "%(email)". Per completare la segnalazione segui le istruzioni contenute nell''email.'
     form_class = SegnalazioneForm
+
+    def form_valid(self, form):
+        self.object = form.save()
+        # registro 'HTTP_X_FORWARDED_FOR' se disponibile
+        if 'HTTP_X_FORWARDED_FOR' in self.request.META:
+            self.object.extra_data = {'HTTP_X_FORWARDED_FOR': self.request.META['HTTP_X_FORWARDED_FOR']}
+            self.object.save()
+        return HttpResponseRedirect(self.get_success_url())
 
     def get_success_url(self):
         return reverse('s', kwargs={'id': self.object.id, 't': self.object.token_lettura})
@@ -107,6 +115,14 @@ def page_not_found(request, exception):
 class Debug(View):
     def get(self, request):
         try:
+            from .models import Notifica
+            Notifica.cron_carica_notifiche_aggiornamenti()
+            # from redminelib import Redmine
+            # redmine = Redmine(settings.REDMINE_ENDPOINT, key=settings.REDMINE_KEY, version=settings.REDMINE_VERSION)
+            # kw = {'cf_%s' % settings.REDMINE_CF_INVIARE_EMAIL: 1}
+            # i = redmine.issue.filter(**kw, include=['journals'])
+            # v = redmine.issue.filter(**kw)[0].custom_fields[0].value
+            # id = redmine.issue.filter(cf_1='0')[0].custom_fields[0].id
             if 'HTTP_X_FORWARDED_FOR' in request.META:
                 logger.warning('Invocata view debug HTTP_X_FORWARDED_FOR %s' % request.META['HTTP_X_FORWARDED_FOR'])
             if 'REMOTE_ADDR' in request.META:

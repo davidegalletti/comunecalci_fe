@@ -7,12 +7,18 @@
 from admin_ordering.admin import OrderableAdmin
 
 from django.contrib import admin
-from segnala.models import Categoria, Segnalazione
+from segnala.models import Categoria, Segnalazione, Notifica
 from mapbox_location_field.admin import MapAdmin
 
 class SegnalazioneAdmin(MapAdmin):
     search_fields = ['nome', 'cognome', 'email', 'titolo', 'testo']
     list_filter = ['categoria', 'stato']
+
+
+class NotificaAdmin(MapAdmin):
+    search_fields = ['segnalazione__nome', 'segnalazione__cognome', 'segnalazione__email', 'segnalazione__titolo',
+                     'segnalazione__testo']
+    list_filter = ['segnalazione__categoria', 'stato']
 
 
 class CategoriaAdmin(OrderableAdmin, admin.ModelAdmin):
@@ -23,5 +29,6 @@ class CategoriaAdmin(OrderableAdmin, admin.ModelAdmin):
     exclude = ['ordine']
 
 
+admin.site.register(Notifica, NotificaAdmin)
 admin.site.register(Categoria, CategoriaAdmin)
 admin.site.register(Segnalazione, SegnalazioneAdmin)

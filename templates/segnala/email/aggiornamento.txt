@@ -1,0 +1,7 @@
+Gentile {{ notifica.segnalazione.nome }} {{ notifica.segnalazione.cognome }},
+
+La segnalazione inviata al comune di Calci (PI) è stata aggiornata:
+
+{{ notifica.testo_da_inviare }}
+
+Cordiali saluti
