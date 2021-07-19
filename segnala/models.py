@@ -232,7 +232,8 @@ class Notifica(TimeStampedModel):
                 'notifica': self
             }
             self.email_tentativo += 1
-            es.send_mail(self.segnalazione.email, 'Comune di Calci, segnalazione %s' % self.id, context)
+            es.send_mail(self.segnalazione.email, 'Comune di Calci, segnalazione %s (%s)' %
+                         (self.segnalazione.titolo, self.segnalazione.id), context)
             self.stato = 'EMAIL_INVIATO'
             self.save()
         except Exception as ex:
