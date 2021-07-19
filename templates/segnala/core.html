@@ -13,17 +13,27 @@
     {% load bootstrap4 %}
     {% bootstrap_css %}
     {% load mapbox_location_field_tags %}
+    {% load static %}
     {% location_field_includes %}
     {% include_jquery %}
-
+    <link rel="stylesheet" href="{% static "css/segnala.css" %}" />
 </head>
-<body>
-<div class="container">
-    <h1 align="center" class="display-3 bg-info text-light">Comune di Calci</h1>
-    {% bootstrap_messages %}
-    {% block content %}
-    {% endblock %}
-</div>
+<body class="body">
+    <div class="container">
+        <header class="header" role="banner">
+            <div class="header-inner clearfix">
+                <a class="brand pull-left" href="https://www.comune.calci.pi.it/">
+                    <img src="https://www.comune.calci.pi.it/images/Loghi_Home_page/logo_01_ulivi.jpg" alt="Comune di Calci">
+                </a>
+                <div class="header-search pull-right">
+
+                </div>
+            </div>
+        </header>
+        {% bootstrap_messages %}
+        {% block content %}
+        {% endblock %}
+    </div>
 <!--
 # Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not
 # distributed with this file, You can obtain one at http://www.gnu.org/licenses/agpl.txt

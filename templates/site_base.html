@@ -10,6 +10,7 @@
     <head>
         <meta charset="utf-8" />
         <title>{% block head_title_base %}{% if SITE_NAME %}{{ SITE_NAME }} | {% endif %}{% block head_title %}{% endblock %}{% endblock %}</title>
+        <link href="https://www.comune.calci.pi.it/templates/protostar/favicon.ico" rel="shortcut icon" type="image/vnd.microsoft.icon">
         {% block viewport %}
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
         {% endblock %}
@@ -22,14 +23,6 @@
     </head>
     <body class="">
         <div class="{% block wrapper_class %}{% endblock %}">
-            {% block header_base %}
-                <header>
-                    <div class="container">
-                        {% block header %}HEADER{% endblock %}
-                    </div>
-                </header>
-            {% endblock %}
-
             {% block body_base %}
                 <section id="content_body">
                     <div class="container">
