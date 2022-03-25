@@ -23,7 +23,7 @@ $(document).ready(function () {
   }
 
   selectCategoria.on('change', function () {
-    let controls = ['id_nome', 'id_cognome', 'id_email', 'id_cellulare', 'id_titolo', 'id_testo', 'map', 'id_foto', 'id_captcha_1'];
+    let controls = ['id_nome', 'id_cognome', 'id_email', 'id_cellulare', 'id_titolo', 'id_testo', 'map', 'id_location_detail', 'id_foto', 'id_captcha_1'];
     switch (this.value) {
       case "":
         helpCategoria.html(helpCategoriaHtmlOriginale);

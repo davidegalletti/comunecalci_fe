@@ -28,9 +28,18 @@ class SegnalazioneForm(forms.ModelForm):
         super(SegnalazioneForm, self).__init__(*args, **kwargs)
         self.fields['categoria'].queryset = Categoria.objects.filter(attiva=True)
 
+    def clean(self):
+        cleaned_data = super(SegnalazioneForm, self).clean()
+        if not (cleaned_data['location'] or cleaned_data['location_detail']):
+            raise forms.ValidationError("Inserire la posizione selezionandola dalla mappa o digitare l'indirizzo o i dettagli della posizione nella casella di testo sotto la mappa.")
+        if not cleaned_data['location']:
+            if len(cleaned_data['location_detail']) < 8:
+                raise forms.ValidationError(
+                    "La descrizione della posizione deve essere più dettagliata. Inserire 8 caratteri o più.")
+
     class Meta:
         model = Segnalazione
-        fields = ("categoria", "nome", "cognome", "email", "cellulare", "titolo", "testo", "location", "address", "foto")
+        fields = ("categoria", "nome", "cognome", "email", "cellulare", "titolo", "testo", "location", "location_detail", "address", "foto")
         #widgets = {'myfield1': forms.TextInput(attrs={'class': 'myfieldclass'}),}
 
     class Media:

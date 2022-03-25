@@ -76,10 +76,11 @@ class Segnalazione(TimeStampedModel):
     stato = models.CharField(max_length=50, default='INIZIALE', choices=STATO)
 
     cellulare = models.CharField("Numero di cellulare", max_length=15)
-    location = LocationField(verbose_name='Posizione ed indirizzo',
+    location = LocationField(verbose_name="Indica sulla mappa la tua segnalazione. Oppure",
         map_attrs={"style": "mapbox://styles/mightysharky/cjwgnjzr004bu1dnpw8kzxa72",
                    "placeholder": "Seleziona la posizione nella mappa.",
                    "center": (10.515822538661212, 43.72580949521296)}, blank=True, null=True)
+    location_detail = models.CharField("Dettagli sulla posizione", max_length=250, blank=True, null=True, help_text="Aggiungere tutto quanto necessario perché l'operatore possa trovare la posizione esatta di quanto state segnalando.")
     address = AddressAutoHiddenField(blank=True, null=True)
     titolo = models.CharField(max_length=100)
     testo = models.TextField()
@@ -232,7 +233,7 @@ class Notifica(TimeStampedModel):
                 'notifica': self
             }
             self.email_tentativo += 1
-            es.send_mail(self.segnalazione.email, 'Comune di Calci, segnalazione %s (%s)' %
+            es.send_mail(self.segnalazione.email, 'Comune di Calci, segnalazione "%s" (%s)' %
                          (self.segnalazione.titolo, self.segnalazione.id), context)
             self.stato = 'EMAIL_INVIATO'
             self.save()
