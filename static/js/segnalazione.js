@@ -52,6 +52,11 @@ $(document).ready(function () {
         controls.forEach(showControl);
         $('input[type=submit]').show()
         break;
+      default:
+        helpCategoria.html('');
+        controls.forEach(showControl);
+        $('input[type=submit]').show()
+        break;
     }
   });
   selectCategoria.change();
