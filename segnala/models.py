@@ -136,7 +136,7 @@ class Segnalazione(TimeStampedModel):
                 custom_fields = [
                     {'id': 1, 'value': self.nome},
                     {'id': 2, 'value': self.cognome},
-                    {'id': 3, 'value': 'id=%s&t=%s' % (self.id, self.token_foto)},
+                    {'id': 3, 'value': ('id=%s&t=%s' % (self.id, self.token_foto) if self.foto else '')},
                     {'id': 4, 'value': (self.location[0] if self.location else '')},
                     {'id': 5, 'value': (self.location[1] if self.location else '')},
                     {'id': 6, 'value': self.address},
