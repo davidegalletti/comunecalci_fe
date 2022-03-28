@@ -36,22 +36,6 @@ $(document).ready(function () {
         if (this.value==="2") helpCategoria.html('Per queste segnalazioni chiamare il numero 800959095 - tasto 2 (attivo dalle 8:30 alle 17:00 lun-ven)');
         if (this.value==="3") helpCategoria.html('Per queste segnalzioni chiamare il numero 800983389 ( da fisso e mobile sempre attivo )');
         break;
-      case "7":
-      case "8":
-      case "9":
-      case "10":
-      case "11":
-      case "12":
-      case "13":
-      case "14":
-      case "15":
-      case "16":
-      case "17":
-      case "18":
-        helpCategoria.html('');
-        controls.forEach(showControl);
-        $('input[type=submit]').show()
-        break;
       default:
         helpCategoria.html('');
         controls.forEach(showControl);

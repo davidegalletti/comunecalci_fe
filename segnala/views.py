@@ -125,18 +125,23 @@ class Debug(View):
     def get(self, request):
         try:
             from .models import Notifica
-            Notifica.cron_carica_notifiche_aggiornamenti()
+            #Segnalazione.cron_notifiche_validazione()
+            Segnalazione.cron_crea_redmine()
+            #Notifica.cron_notifiche_aggiornamenti()
             # from redminelib import Redmine
             # redmine = Redmine(settings.REDMINE_ENDPOINT, key=settings.REDMINE_KEY, version=settings.REDMINE_VERSION)
             # kw = {'cf_%s' % settings.REDMINE_CF_INVIARE_EMAIL: 1}
             # i = redmine.issue.filter(**kw, include=['journals'])
             # v = redmine.issue.filter(**kw)[0].custom_fields[0].value
             # id = redmine.issue.filter(cf_1='0')[0].custom_fields[0].id
+            ip = ''
             if 'HTTP_X_FORWARDED_FOR' in request.META:
-                logger.warning('Invocata view debug HTTP_X_FORWARDED_FOR %s' % request.META['HTTP_X_FORWARDED_FOR'])
+                ip = request.META['HTTP_X_FORWARDED_FOR']
+                logger.warning('Invocata view debug HTTP_X_FORWARDED_FOR %s' % ip)
             if 'REMOTE_ADDR' in request.META:
-                logger.warning('Invocata view debug REMOTE_ADDR %s' % request.META['REMOTE_ADDR'])
-            return HttpResponse('debug')
+                ip = request.META['REMOTE_ADDR']
+                logger.warning('Invocata view debug REMOTE_ADDR %s' % ip)
+            return HttpResponse('debug %s' % ip)
             # Segnalazione.cron_notifiche()
             # bSegnalazione.cron_crea_redmine()
         except Exception as ex:
