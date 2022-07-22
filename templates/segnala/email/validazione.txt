@@ -7,4 +7,4 @@ Per completare la segnalazione è necessario validare il tuo indirizzo di e-mail
 
 {{ http_host }}{% url "v" segnalazione.id segnalazione.token_validazione %}
 
-Cordiali saluti
+Grazie per la segnalazione
