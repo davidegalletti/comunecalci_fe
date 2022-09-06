@@ -18,6 +18,7 @@ from redminelib import Redmine
 logger_cron = logging.getLogger('cron')
 logger = logging.getLogger('segnala')
 
+
 class TimeStampedModel(models.Model):
     """An abstract base class model that provides self-updating ``created`` and ``modified`` fields."""
     created = models.DateTimeField(auto_now_add=True)
@@ -33,7 +34,6 @@ class Categoria(models.Model):
     ordine = models.SmallIntegerField(default=0, db_index=True)
     attiva = models.BooleanField(default=True)
     testo_di_aiuto = models.CharField(max_length=300, help_text='NON ANCORA USATO', blank=True, null=True)
-
 
     class Meta:
         verbose_name_plural = 'Categorie'
@@ -64,28 +64,31 @@ class Segnalazione(TimeStampedModel):
                 COMPLETATO:
     '''
     redmine_id = models.PositiveIntegerField(blank=True, null=True, db_index=True)
-    nome = models.CharField(max_length=100)
-    cognome = models.CharField(max_length=100)
+    nome = models.CharField(verbose_name="Nome *", max_length=100)
+    cognome = models.CharField(verbose_name="Cognome *", max_length=100)
     token_validazione = models.CharField(max_length=100, db_index=True)
     token_lettura = models.CharField(max_length=100, db_index=True, blank=True, default='')
     token_foto = models.CharField(max_length=100, db_index=True, blank=True, default='')
     # token_foto usato come chiave per accedere alla foto dall'esterno
-    email = models.EmailField()
+    email = models.EmailField(verbose_name="E-mail *")
     email_tentativo = models.IntegerField(default=0)
     # quanti tentativi sono stati fatti di invio email
     stato = models.CharField(max_length=50, default='INIZIALE', choices=STATO)
 
-    cellulare = models.CharField("Numero di cellulare", max_length=15)
-    location = LocationField(verbose_name="Indica sulla mappa la tua segnalazione. Oppure",
-        map_attrs={"style": "mapbox://styles/mightysharky/cjwgnjzr004bu1dnpw8kzxa72",
-                   "placeholder": "Seleziona la posizione nella mappa.",
-                   "center": (10.515822538661212, 43.72580949521296)}, blank=True, null=True)
-    location_detail = models.CharField("Dettagli sulla posizione", max_length=250, blank=True, null=True, help_text="Aggiungere tutto quanto necessario perché l'operatore possa trovare la posizione esatta di quanto state segnalando.")
+    cellulare = models.CharField("Numero di cellulare *", max_length=15)
+    location = LocationField(verbose_name="Indica sulla mappa la tua segnalazione oppure inserisci sotto i dettagli "
+                                          "sulla posizione.",
+                             map_attrs={"style": "mapbox://styles/mightysharky/cjwgnjzr004bu1dnpw8kzxa72",
+                                        "placeholder": "Seleziona la posizione nella mappa.",
+                                        "center": (10.515822538661212, 43.72580949521296)}, blank=True, null=True)
+    location_detail = models.CharField("Dettagli sulla posizione", max_length=250, blank=True, null=True,
+                                       help_text="Aggiungere tutto quanto necessario perché l'operatore possa trovare la posizione esatta di quanto state segnalando.")
     address = AddressAutoHiddenField(blank=True, null=True)
-    titolo = models.CharField(max_length=100)
-    testo = models.TextField()
+    titolo = models.CharField(verbose_name="Titolo *", max_length=100)
+    testo = models.TextField(verbose_name="Dettaglio della segnalazione *")
     foto = models.ImageField(upload_to='foto/%Y/%m/%d/', blank=True, null=True)
-    categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, help_text='Seleziona la categoria e poi inserisci gli altri dati.')
+    categoria = models.ForeignKey(Categoria, verbose_name="Categoria *", on_delete=models.CASCADE,
+                                  help_text='Seleziona la categoria e poi inserisci gli altri dati.')
     # https://docs.djangoproject.com/en/3.2/releases/3.1/#jsonfield-for-all-supported-database-backends
     extra_data = models.JSONField(blank=True, null=True)
 
@@ -119,10 +122,10 @@ class Segnalazione(TimeStampedModel):
             if self.email_tentativo > settings.MAX_EMAIL_ATTEMPTS:
                 self.stato = 'EMAIL_FALLITO'
                 logger_cron.warning('Superato in massimo numero di tentativi (%s) di invio email per la segnalazione %s'
-                                ' all\'indirizzo %s: %s' % (settings.MAX_EMAIL_ATTEMPTS,
-                                                            self.id,
-                                                            self.email,
-                                                            str(ex)) )
+                                    ' all\'indirizzo %s: %s' % (settings.MAX_EMAIL_ATTEMPTS,
+                                                                self.id,
+                                                                self.email,
+                                                                str(ex)))
             self.save()
 
     def crea_in_redmine(self):
@@ -130,10 +133,10 @@ class Segnalazione(TimeStampedModel):
             redmine = Redmine(settings.REDMINE_ENDPOINT, key=settings.REDMINE_KEY, version=settings.REDMINE_VERSION)
             redmine_project = redmine.project.get(settings.REDMINE_PROJECT)
             red_issue = redmine.issue.create(
-                subject = self.titolo,
-                description = '%s\n\n%s\n !%s!' % (self.testo, ('%s\n\n' % self.tag_mappa), self.foto_url),
-                category_id = self.categoria.redmine_id,
-                custom_fields = [
+                subject=self.titolo,
+                description='%s\n\n%s\n !%s!' % (self.testo, ('%s\n\n' % self.tag_mappa), self.foto_url),
+                category_id=self.categoria.redmine_id,
+                custom_fields=[
                     {'id': 1, 'value': self.nome},
                     {'id': 2, 'value': self.cognome},
                     {'id': 3, 'value': ('id=%s&t=%s' % (self.id, self.token_foto) if self.foto else '')},
@@ -142,12 +145,12 @@ class Segnalazione(TimeStampedModel):
                     {'id': 6, 'value': self.address},
                     {'id': 7, 'value': self.cellulare}
                 ],
-                project_id = redmine_project.id)
+                project_id=redmine_project.id)
             self.stato = 'CREATO_IN_REDMINE'
             self.redmine_id = red_issue.id
             self.save()
         except Exception as ex:
-            logger_cron.error('Errore creando in redmine la segnalazione %s: %s' % (self.id, str(ex)) )
+            logger_cron.error('Errore creando in redmine la segnalazione %s: %s' % (self.id, str(ex)))
 
     @property
     def tag_mappa(self):
@@ -199,7 +202,7 @@ class Notifica(TimeStampedModel):
                 notifica_da_inviare = False
                 for detail in journal.details:
                     if detail['property'] == 'cf' and detail['name'] == settings.REDMINE_CF_INVIA_LE_NOTE \
-                                                  and detail['new_value'] == '1':
+                            and detail['new_value'] == '1':
                         # è una modifica che setta a True il flag INVIA_LE_NOTE ?
                         notifica_da_inviare = True
                         break
@@ -209,14 +212,14 @@ class Notifica(TimeStampedModel):
                         try:
                             segnalazione = Segnalazione.objects.get(redmine_id=issue.id)
                             n = Notifica(segnalazione=segnalazione,
-                                                        journal_id=journal.id,
-                                                        testo_da_inviare=journal.notes)
+                                         journal_id=journal.id,
+                                         testo_da_inviare=journal.notes)
                             n.save()
                         except Exception as ex:
                             logger_cron.error('Errore cercando la segnalazione il cui id su redmine è %s: %s' %
-                                         (issue.id, str(ex)))
-            kw = {'id' : settings.REDMINE_CF_INVIARE_EMAIL, 'value': '0'}
-            issue.custom_fields=[kw]
+                                              (issue.id, str(ex)))
+            kw = {'id': settings.REDMINE_CF_INVIARE_EMAIL, 'value': '0'}
+            issue.custom_fields = [kw]
             issue.save()
         logger_cron.info('Fine cron_carica_notifiche_aggiornamenti')
 
@@ -241,10 +244,10 @@ class Notifica(TimeStampedModel):
             if self.email_tentativo > settings.MAX_EMAIL_ATTEMPTS:
                 self.stato = 'EMAIL_FALLITO'
                 logger_cron.warning('Superato in massimo numero di tentativi (%s) di invio email per la segnalazione %s'
-                                ' all\'indirizzo %s: %s' % (settings.MAX_EMAIL_ATTEMPTS,
-                                                            self.id,
-                                                            self.segnalazione.email,
-                                                            str(ex)) )
+                                    ' all\'indirizzo %s: %s' % (settings.MAX_EMAIL_ATTEMPTS,
+                                                                self.id,
+                                                                self.segnalazione.email,
+                                                                str(ex)))
             self.save()
 
     class Meta:
@@ -261,4 +264,3 @@ class Aggiornamento(TimeStampedModel):
 class Foto(models.Model):
     aggiornamento = models.ForeignKey(Aggiornamento, on_delete=CASCADE)
     image = models.ImageField(upload_to='foto/%Y/%m/%d/')
-

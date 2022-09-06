@@ -33,14 +33,24 @@ class SegnalazioneForm(forms.ModelForm):
         if not (cleaned_data['location'] or cleaned_data['location_detail']):
             raise forms.ValidationError("Inserire la posizione selezionandola dalla mappa o digitare l'indirizzo o i dettagli della posizione nella casella di testo sotto la mappa.")
         if not cleaned_data['location']:
+            # CENTRO DI CALCI SECONDO GEONAMES:
             if len(cleaned_data['location_detail']) < 8:
                 raise forms.ValidationError(
                     "La descrizione della posizione deve essere più dettagliata. Inserire 8 caratteri o più.")
+        else:
+            lat_centro_di_calci = 10.51831
+            lon_centro_di_calci = 43.72364
+            lat = float(cleaned_data['location'].split(',')[0])
+            lon = float(cleaned_data['location'].split(',')[1])
+            delta_ammesso = 0.04
+            if abs(lat_centro_di_calci-lat)>delta_ammesso or abs(lon_centro_di_calci-lon)>delta_ammesso:
+                raise forms.ValidationError(
+                    "La posizione indicata è troppo distante dal comune di Calci. Selezionare una posizione dentro i "
+                    "confini comunali.")
 
     class Meta:
         model = Segnalazione
         fields = ("categoria", "nome", "cognome", "email", "cellulare", "titolo", "testo", "location", "location_detail", "address", "foto")
-        #widgets = {'myfield1': forms.TextInput(attrs={'class': 'myfieldclass'}),}
 
     class Media:
         js = ("js/segnalazione.js",)
@@ -69,7 +79,12 @@ class AddSegnalazioneView(SuccessMessageMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(AddSegnalazioneView, self).get_context_data(**kwargs)
-        context.update({'versione': settings.VERSIONE})
+        ## PATCH https://github.com/simon-the-shark/django-mapbox-location-field/issues/38
+        if 'cleaned_data' in context['form']:
+            posizione_zero = float(context['form'].cleaned_data['location'].split(',')[0])
+            posizione_uno = float(context['form'].cleaned_data['location'].split(',')[1])
+            context['form'].cleaned_data['location'] = '%s,%s' % (posizione_uno, posizione_zero)
+            context.update({'versione': settings.VERSIONE})
         return context
 
 
@@ -149,7 +164,7 @@ class Debug(View):
             return HttpResponse('Errore view debug: %s' % str(ex))
 
 
-class serve_image(View):
+class ServeImage(View):
     def get(self, request):
         s_id = request.GET['id']
         token_foto = request.GET['t']
@@ -162,8 +177,5 @@ class serve_image(View):
             response = HttpResponse(img.read())
             response['Content-Type'] = 'image/jpeg'
             response['Content-Disposition'] = 'inline'
-            # response['Content-Disposition'] = 'attachment'
-            # response['Content-Disposition'] = 'inline; filename="some_file.pdf"'
 
-        # pdf.close()
         return response

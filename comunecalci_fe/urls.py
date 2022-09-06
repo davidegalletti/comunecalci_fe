@@ -15,7 +15,7 @@ urlpatterns = [
     path('d', login_required(views.Debug.as_view()), name='d'),
     path('', views.AddSegnalazioneView.as_view(), name="home"),
     path('v/<int:id>/<str:t>', views.ValidazioneEmail.as_view(), name='v'),
-    path('i', views.serve_image.as_view(), name='i'),
+    path('i', views.ServeImage.as_view(), name='i'),
     path('s/<int:id>/<str:t>', views.VediSegnalazione.as_view(), name='s'),
     path('captcha/', include('captcha.urls')),
 ]
