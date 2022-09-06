@@ -158,7 +158,7 @@ class Debug(View):
                 logger.warning('Invocata view debug REMOTE_ADDR %s' % ip)
             return HttpResponse('debug %s' % ip)
             # Segnalazione.cron_notifiche()
-            # bSegnalazione.cron_crea_redmine()
+            # Segnalazione.cron_crea_redmine()
         except Exception as ex:
             logger.error('Errore view debug: %s' % str(ex))
             return HttpResponse('Errore view debug: %s' % str(ex))
