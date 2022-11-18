@@ -30,6 +30,7 @@ $(document).ready(function () {
       case "1":
       case "2":
       case "3":
+      case "20":
         controls.forEach(hideControl);
         $('input[type=submit]').hide();
         if (this.value==="1") helpCategoria.html('Per queste segnalazioni chiamare il numero 800889333 ( sempre attivo )');
