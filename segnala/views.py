@@ -164,7 +164,7 @@ class Debug(View):
             if settings.DEBUG:
                 return HttpResponse('debug %s' % ip)
             else:
-                return HttpResponse('ATTENZIONE invocata viw debug in PRODUZIONE')
+                return HttpResponse('ATTENZIONE invocata view debug in PRODUZIONE')
             # Segnalazione.cron_notifiche()
             # Segnalazione.cron_crea_redmine()
         except Exception as ex:
