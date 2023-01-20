@@ -2,7 +2,12 @@
 {% load bootstrap4 %}
 {% block content %}
     <h2 align="center" class="display-5">Grazie!</h2>
-    {{ segnalazione.titolo }}
+    <script>
+        var timer = setTimeout(function() {
+            window.location='https://segnala.comune.calci.pi.it'
+        }, 10000);
+    </script>
+
 {% endblock %}
 {% comment %}
 # Subject to the terms of the GNU AFFERO GENERAL PUBLIC LICENSE, v. 3.0. If a copy of the AGPL was not

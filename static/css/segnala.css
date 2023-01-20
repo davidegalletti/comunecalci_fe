@@ -23,3 +23,8 @@
   width: 100%;
   height: auto;
 }
+
+.small, small {
+    font-size: 150%;
+    font-weight: 400;
+}
