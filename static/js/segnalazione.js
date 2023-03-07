@@ -9,8 +9,12 @@ $(document).ready(function () {
   let selectCategoria = $('select[name=categoria][id=id_categoria]');
   let helpCategoria = selectCategoria.parent().children('small');
   let helpCategoriaHtmlOriginale = helpCategoria.html()
-  let inputFoto = $('input[name=foto][id=id_foto]');
-  inputFoto.attr('accept', 'image/*;capture=camera');
+  let inputFoto1 = $('input[name=foto][id=id_foto]');
+  let inputFoto2 = $('input[name=foto2][id=id_foto2]');
+  let inputFoto3 = $('input[name=foto3][id=id_foto3]');
+  inputFoto1.attr('accept', 'image/*;capture=camera');
+  inputFoto2.attr('accept', 'image/*;capture=camera');
+  inputFoto3.attr('accept', 'image/*;capture=camera');
 
   function hideControl(name) {
     $('input#' + name).parent().hide();
@@ -23,7 +27,7 @@ $(document).ready(function () {
   }
 
   selectCategoria.on('change', function () {
-    let controls = ['id_nome', 'id_cognome', 'id_email', 'id_cellulare', 'id_titolo', 'id_testo', 'map', 'id_location_detail', 'id_foto', 'id_captcha_1'];
+    let controls = ['id_nome', 'id_cognome', 'id_email', 'id_cellulare', 'id_titolo', 'id_testo', 'map', 'id_location_detail', 'id_foto', 'id_foto2', 'id_foto3', 'id_captcha_1'];
     switch (this.value) {
       case "":
         helpCategoria.html(helpCategoriaHtmlOriginale);

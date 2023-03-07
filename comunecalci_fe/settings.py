@@ -5,7 +5,7 @@
 # Author: Davide Galletti                davide   ( at )   c4k.it
 
 
-from . import keep_safe
+from . import keep_safe, keep_safe
 from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -130,7 +130,7 @@ EMAIL_PORT = keep_safe.EMAIL_PORT
 EMAIL_USE_TLS = keep_safe.EMAIL_USE_TLS
 EMAIL_HOST_USER = keep_safe.EMAIL_HOST_USER
 EMAIL_HOST_PASSWORD = keep_safe.EMAIL_HOST_PASSWORD
-HTTP_HOST = 'https://segnala.comune.calci.pi.it'
+HTTP_HOST = keep_safe.HTTP_HOST
 
 # PARAMETRI PER API REDMINE
 REDMINE_ENDPOINT = keep_safe.REDMINE_ENDPOINT
@@ -211,4 +211,4 @@ LOGGING = {
     }
 }
 
-VERSIONE = '0.4.2'
+VERSIONE = '0.4.3'
