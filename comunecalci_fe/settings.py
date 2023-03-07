@@ -18,7 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = keep_safe.SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = keep_safe.DEBUG
 
 ALLOWED_HOSTS = ['*']
 
@@ -211,4 +211,4 @@ LOGGING = {
     }
 }
 
-VERSIONE = '0.4.1'
+VERSIONE = '0.4.2'
