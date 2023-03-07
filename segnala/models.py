@@ -87,6 +87,8 @@ class Segnalazione(TimeStampedModel):
     titolo = models.CharField(verbose_name="Titolo *", max_length=100)
     testo = models.TextField(verbose_name="Dettaglio della segnalazione *")
     foto = models.ImageField(upload_to='foto/%Y/%m/%d/', blank=True, null=True)
+    foto2 = models.ImageField("Altra foto", upload_to='foto/%Y/%m/%d/', blank=True, null=True)
+    foto3 = models.ImageField("Altra foto", upload_to='foto/%Y/%m/%d/', blank=True, null=True)
     categoria = models.ForeignKey(Categoria, verbose_name="Categoria *", on_delete=models.CASCADE,
                                   help_text='Seleziona la categoria e poi inserisci gli altri dati.')
     # https://docs.djangoproject.com/en/3.2/releases/3.1/#jsonfield-for-all-supported-database-backends
@@ -128,13 +130,25 @@ class Segnalazione(TimeStampedModel):
                                                                 str(ex)))
             self.save()
 
+    @property
+    def redmine_foto_description(self):
+        foto = []
+        foto_url = self.foto_url
+        if self.foto:
+            foto.append('!%s&n=1!' % foto_url)
+        if self.foto2:
+            foto.append('!%s&n=2!' % foto_url)
+        if self.foto3:
+            foto.append('!%s&n=3!' % foto_url)
+        return '\n\n'.join(foto)
+
     def crea_in_redmine(self):
         try:
             redmine = Redmine(settings.REDMINE_ENDPOINT, key=settings.REDMINE_KEY, version=settings.REDMINE_VERSION)
             redmine_project = redmine.project.get(settings.REDMINE_PROJECT)
             red_issue = redmine.issue.create(
                 subject=self.titolo,
-                description='%s\n\n%s\n !%s!' % (self.testo, ('%s\n\n' % self.tag_mappa), self.foto_url),
+                description='%s\n\n%s\n %s' % (self.testo, ('%s\n\n' % self.tag_mappa), self.redmine_foto_description),
                 category_id=self.categoria.redmine_id,
                 custom_fields=[
                     {'id': 1, 'value': self.nome},
@@ -161,9 +175,7 @@ class Segnalazione(TimeStampedModel):
 
     @property
     def foto_url(self):
-        if self.foto:
-            return '%s%s?id=%s&t=%s' % (settings.HTTP_HOST, reverse('i'), self.id, self.token_foto)
-        return ''
+        return '%s%s?id=%s&t=%s' % (settings.HTTP_HOST, reverse('i'), self.id, self.token_foto)
 
     @classmethod
     def cron_notifiche_validazione(cls):

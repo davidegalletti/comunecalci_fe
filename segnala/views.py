@@ -31,7 +31,8 @@ class SegnalazioneForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(SegnalazioneForm, self).clean()
         if not (cleaned_data['location'] or cleaned_data['location_detail']):
-            raise forms.ValidationError("Inserire la posizione selezionandola dalla mappa o digitare l'indirizzo o i dettagli della posizione nella casella di testo sotto la mappa.")
+            raise forms.ValidationError(
+                "Inserire la posizione selezionandola dalla mappa o digitare l'indirizzo o i dettagli della posizione nella casella di testo sotto la mappa.")
         if not cleaned_data['location']:
             # CENTRO DI CALCI SECONDO GEONAMES:
             if len(cleaned_data['location_detail']) < 8:
@@ -43,14 +44,16 @@ class SegnalazioneForm(forms.ModelForm):
             lat = float(cleaned_data['location'].split(',')[0])
             lon = float(cleaned_data['location'].split(',')[1])
             delta_ammesso = 0.04
-            if abs(lat_centro_di_calci-lat)>delta_ammesso or abs(lon_centro_di_calci-lon)>delta_ammesso:
+            if abs(lat_centro_di_calci - lat) > delta_ammesso or abs(lon_centro_di_calci - lon) > delta_ammesso:
                 raise forms.ValidationError(
                     "La posizione indicata è troppo distante dal comune di Calci. Selezionare una posizione dentro i "
                     "confini comunali.")
 
     class Meta:
         model = Segnalazione
-        fields = ("categoria", "nome", "cognome", "email", "cellulare", "titolo", "testo", "location", "location_detail", "address", "foto")
+        fields = (
+        "categoria", "nome", "cognome", "email", "cellulare", "titolo", "testo", "location", "location_detail",
+        "address", "foto", "foto2", "foto3")
 
     class Media:
         js = ("js/segnalazione.js",)
@@ -96,15 +99,17 @@ class ValidazioneEmail(TemplateView):
         s_id = kwargs['id']
         token_validazione = kwargs['t']
         try:
-            segnalazione = Segnalazione.objects.get(id = s_id)
+            segnalazione = Segnalazione.objects.get(id=s_id)
         except Exception as ex:
             logger.warning('Tentativo di validare email con parametro id segnalazione errat %s: %s' % (s_id, str(ex)))
             raise Http404("Accesso non autorizzato")
         if segnalazione.token_validazione == token_validazione:
             if segnalazione.stato == 'EMAIL_VALIDATO':
-                messages.add_message(self.request, messages.WARNING, 'Hai già validato il tuo indirizzo di email. Verrai contattato in merito alla segnalazione fatta.')
+                messages.add_message(self.request, messages.WARNING,
+                                     'Hai già validato il tuo indirizzo di email. Verrai contattato in merito alla segnalazione fatta.')
             else:
-                messages.add_message(self.request, messages.SUCCESS, 'Il tuo indirizzo di email è stato validato! Verrai contattato in merito alla segnalazione fatta.')
+                messages.add_message(self.request, messages.SUCCESS,
+                                     'Il tuo indirizzo di email è stato validato! Verrai contattato in merito alla segnalazione fatta.')
                 segnalazione.stato = 'EMAIL_VALIDATO'
                 segnalazione.save()
             # TODO: vogliamo introdurre un limite di ore per la validazione?
@@ -123,7 +128,7 @@ class VediSegnalazione(TemplateView):
         s_id = kwargs['id']
         token_lettura = kwargs['t']
         try:
-            segnalazione = Segnalazione.objects.get(id = s_id)
+            segnalazione = Segnalazione.objects.get(id=s_id)
         except:
             raise Http404("Accesso non autorizzato")
         if segnalazione.token_lettura != token_lettura:
@@ -140,9 +145,9 @@ class Debug(View):
     def get(self, request):
         try:
             from .models import Notifica
-            #Segnalazione.cron_notifiche_validazione()
+            # Segnalazione.cron_notifiche_validazione()
             # Segnalazione.cron_crea_redmine()
-            #Notifica.cron_notifiche_aggiornamenti()
+            # Notifica.cron_notifiche_aggiornamenti()
             # from redminelib import Redmine
             # redmine = Redmine(settings.REDMINE_ENDPOINT, key=settings.REDMINE_KEY, version=settings.REDMINE_VERSION)
             # kw = {'cf_%s' % settings.REDMINE_CF_INVIARE_EMAIL: 1}
