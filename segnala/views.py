@@ -181,12 +181,18 @@ class ServeImage(View):
     def get(self, request):
         s_id = request.GET['id']
         token_foto = request.GET['t']
+        n = request.GET['n']
         try:
             segnalazione = Segnalazione.objects.get(id=s_id, token_foto=token_foto)
         except:
             raise Http404("Accesso non autorizzato")
-
-        with open('%s/%s%s' % (settings.BASE_DIR, settings.MEDIA_ROOT, segnalazione.foto.url[1:]), 'rb') as img:
+        if n==3:
+            foto_url = segnalazione.foto3.url[1:]
+        elif n==2:
+            foto_url = segnalazione.foto2.url[1:]
+        else:
+            foto_url = segnalazione.foto.url[1:]
+        with open('%s/%s%s' % (settings.BASE_DIR, settings.MEDIA_ROOT, foto_url), 'rb') as img:
             response = HttpResponse(img.read())
             response['Content-Type'] = 'image/jpeg'
             response['Content-Disposition'] = 'inline'
