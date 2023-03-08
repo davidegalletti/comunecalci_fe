@@ -144,6 +144,7 @@ class Segnalazione(TimeStampedModel):
 
     def crea_in_redmine(self):
         try:
+            logger_cron.info('Creo in redmine la Segnalazione %s' % self.id)
             redmine = Redmine(settings.REDMINE_ENDPOINT, key=settings.REDMINE_KEY, version=settings.REDMINE_VERSION)
             redmine_project = redmine.project.get(settings.REDMINE_PROJECT)
             red_issue = redmine.issue.create(
