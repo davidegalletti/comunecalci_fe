@@ -106,15 +106,20 @@ class ValidazioneEmail(TemplateView):
         if segnalazione.token_validazione == token_validazione:
             if segnalazione.stato == 'EMAIL_INVIATO':
                 messages.add_message(self.request, messages.SUCCESS,
-                                     'Il tuo indirizzo di email è stato validato! Verrai contattato in merito alla segnalazione fatta.')
+                                     "Il tuo indirizzo di email è stato validato! "
+                                     "Puoi mettere un segnalibro in questa pagina o fare clic sull'email ricevuto "
+                                     "per vedere gli aggiornamenti. Riceverai comunque una notifica ad ogni aggiornamento.")
                 segnalazione.stato = 'EMAIL_VALIDATO'
                 segnalazione.save()
             elif segnalazione.stato == 'CREATO_IN_REDMINE':
-                messages.add_message(self.request, messages.WARNING,
-                                     'La tua segnalazione è correttamente registrata ed è stata notificata agli operatori.')
+                messages.add_message(self.request, messages.SUCCESS,
+                                     'Alla tua segnalazione è stato assegnato il numero %s. '
+                                     "Puoi mettere un segnalibro in questa pagina o fare clic sull'email ricevuto "
+                                     "per vedere gli aggiornamenti. Riceverai comunque una notifica ad ogni aggiornamento."
+                                     % segnalazione.redmine_id)
             else:
                 messages.add_message(self.request, messages.ERROR,
-                                     'Hai già validato il tuo indirizzo di email. Verrai contattato in merito alla segnalazione fatta.')
+                                     "C'è un problema nella gestione della tua segnalazione. Riprova più tardi.")
                 logger.warning(
                     'STATO INCOERENTE DURANTE TENTATIVO DI VALIDAZIONE Segnalazione.id %s' % s_id)
             # TODO: vogliamo introdurre un limite di ore per la validazione?
@@ -164,9 +169,6 @@ class Debug(View):
             logger.info('Invocata view debug')
             logger.warning('Invocata view debug')
             logger.error('Invocata view debug')
-            logger_cron.debug('LOGGER CRON Invocata view debug')
-            logger_cron.info('LOGGER CRON Invocata view debug')
-            logger_cron.warning('LOGGER CRON Invocata view debug')
             logger_cron.error('LOGGER CRON Invocata view debug')
             ip = ''
             if 'HTTP_X_FORWARDED_FOR' in request.META:
