@@ -159,10 +159,15 @@ class Debug(View):
             # i = redmine.issue.filter(**kw, include=['journals'])
             # v = redmine.issue.filter(**kw)[0].custom_fields[0].value
             # id = redmine.issue.filter(cf_1='0')[0].custom_fields[0].id
+            logger_cron = logging.getLogger('cron')
             logger.debug('Invocata view debug')
             logger.info('Invocata view debug')
             logger.warning('Invocata view debug')
             logger.error('Invocata view debug')
+            logger_cron.debug('LOGGER CRON Invocata view debug')
+            logger_cron.info('LOGGER CRON Invocata view debug')
+            logger_cron.warning('LOGGER CRON Invocata view debug')
+            logger_cron.error('LOGGER CRON Invocata view debug')
             ip = ''
             if 'HTTP_X_FORWARDED_FOR' in request.META:
                 ip = request.META['HTTP_X_FORWARDED_FOR']
@@ -171,6 +176,7 @@ class Debug(View):
                 ip = request.META['REMOTE_ADDR']
                 logger.warning('Invocata view debug REMOTE_ADDR %s' % ip)
 
+            Notifica.cron_notifiche_aggiornamenti()
             if settings.DEBUG:
                 return HttpResponse('debug %s' % ip)
             else:
