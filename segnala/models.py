@@ -256,7 +256,7 @@ class Notifica(TimeStampedModel):
         except Exception as ex:
             if self.email_tentativo > settings.MAX_EMAIL_ATTEMPTS:
                 self.stato = 'EMAIL_FALLITO'
-                logger_cron.warning('Superato in massimo numero di tentativi (%s) di invio email per la segnalazione %s'
+                logger_cron.error('Superato in massimo numero di tentativi (%s) di invio email per la segnalazione %s'
                                     ' all\'indirizzo %s: %s' % (settings.MAX_EMAIL_ATTEMPTS,
                                                                 self.id,
                                                                 self.segnalazione.email,

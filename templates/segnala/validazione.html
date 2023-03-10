@@ -1,12 +1,29 @@
 {% extends "segnala/core.html" %}
 {% load bootstrap4 %}
 {% block content %}
-    <h2 align="center" class="display-5">Grazie!</h2>
-    <script>
-        var timer = setTimeout(function() {
-            window.location='https://segnala.comune.calci.pi.it'
-        }, 10000);
-    </script>
+    {% if segnalazione.stato == "EMAIL_VALIDATO" %}
+        <script>
+            var timer = setTimeout(function() {
+                window.location='/'
+            }, 30000);
+        </script>
+        <h2 align="center" class="display-5">Grazie!</h2>
+        <h2>{{ segnalazione.titolo }}</h2>
+        <h3>Hai inserito i seguenti dati:</h3>
+    {% else %}
+        <h2>{{ segnalazione.titolo }}</h2>
+        {% for notifica in segnalazione.notifica_set.all %}
+            {% if forloop.first %}
+            <h3>Aggiornamenti:</h3>
+            {% endif %}
+            {% if notifica.stato == "EMAIL_INVIATO" %}
+                <p>{{ notifica.created }}: {{ notifica.testo_da_inviare }}</p>
+            {% endif %}
+        {% endfor %}
+        <h3>Dati iniziali:</h3>
+    {% endif %}
+    {% include "segnala/_segnalazione.hmtl" with segnalazione=segnalazione %}
+
 
 {% endblock %}
 {% comment %}

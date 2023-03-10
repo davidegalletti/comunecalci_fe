@@ -101,17 +101,22 @@ class ValidazioneEmail(TemplateView):
         try:
             segnalazione = Segnalazione.objects.get(id=s_id)
         except Exception as ex:
-            logger.warning('Tentativo di validare email con parametro id segnalazione errat %s: %s' % (s_id, str(ex)))
+            logger.warning('Tentativo di validare email con parametro id segnalazione errato %s: %s' % (s_id, str(ex)))
             raise Http404("Accesso non autorizzato")
         if segnalazione.token_validazione == token_validazione:
-            if segnalazione.stato == 'EMAIL_VALIDATO':
-                messages.add_message(self.request, messages.WARNING,
-                                     'Hai già validato il tuo indirizzo di email. Verrai contattato in merito alla segnalazione fatta.')
-            else:
+            if segnalazione.stato == 'EMAIL_INVIATO':
                 messages.add_message(self.request, messages.SUCCESS,
                                      'Il tuo indirizzo di email è stato validato! Verrai contattato in merito alla segnalazione fatta.')
                 segnalazione.stato = 'EMAIL_VALIDATO'
                 segnalazione.save()
+            elif segnalazione.stato == 'CREATO_IN_REDMINE':
+                messages.add_message(self.request, messages.WARNING,
+                                     'La tua segnalazione è correttamente registrata ed è stata notificata agli operatori.')
+            else:
+                messages.add_message(self.request, messages.ERROR,
+                                     'Hai già validato il tuo indirizzo di email. Verrai contattato in merito alla segnalazione fatta.')
+                logger.warning(
+                    'STATO INCOERENTE DURANTE TENTATIVO DI VALIDAZIONE Segnalazione.id %s' % s_id)
             # TODO: vogliamo introdurre un limite di ore per la validazione?
         else:
             logger.warning('Tentativo di validare email con parametro token segnalazione errato %s' % token_validazione)
@@ -186,9 +191,9 @@ class ServeImage(View):
             segnalazione = Segnalazione.objects.get(id=s_id, token_foto=token_foto)
         except:
             raise Http404("Accesso non autorizzato")
-        if n==3:
+        if n=='3':
             foto_url = segnalazione.foto3.url[1:]
-        elif n==2:
+        elif n=='2':
             foto_url = segnalazione.foto2.url[1:]
         else:
             foto_url = segnalazione.foto.url[1:]

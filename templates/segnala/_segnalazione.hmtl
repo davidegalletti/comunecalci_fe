@@ -1,0 +1,23 @@
+    <p>Nome: {{ segnalazione.nome }}</p>
+    <p>Cognome: {{ segnalazione.cognome }}</p>
+    <p>Email: {{ segnalazione.email }}</p>
+    <p>Numero di cellulare: {{ segnalazione.cellulare }}</p>
+    <p>Dettaglio della segnalazione: {{ segnalazione.testo }}</p>
+    {% if segnalazione.address %}
+    <p>Indirizzo: {{ segnalazione.address }}</p>
+    {% endif %}
+    {% if segnalazione.location_detail %}
+    <p>Dettagli sulla posizione: {{ segnalazione.location_detail }}</p>
+    {% endif %}
+    {% if segnalazione.foto or segnalazione.foto2 or segnalazione.foto3 %}
+    <p>Foto:</p>
+    {% endif %}
+    {% if segnalazione.foto %}
+    <p><img src="{% url "i" %}?id={{ segnalazione.id }}&t={{ segnalazione.token_foto }}&n=1"></p>
+    {% endif %}
+    {% if segnalazione.foto2 %}
+    <p><img src="{% url "i" %}?id={{ segnalazione.id }}&t={{ segnalazione.token_foto }}&n=2"></p>
+    {% endif %}
+    {% if segnalazione.foto3 %}
+    <p><img src="{% url "i" %}?id={{ segnalazione.id }}&t={{ segnalazione.token_foto }}&n=3"></p>
+    {% endif %}

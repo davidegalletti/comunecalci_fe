@@ -1,11 +1,17 @@
 {% extends "segnala/core.html" %}
 {% load bootstrap4 %}
 {% block content %}
-    <h2 align="center" class="display-5">Grazie! Riceverai un e-mail tramite la quale potrai confermare l'invio della segnalazione.</h2>
+    {% if segnalazione.stato == "INIZIALE" %}
+        <h2 align="center" class="display-5">Grazie! Riceverai un e-mail tramite la quale dovrai confermare l'invio della segnalazione.</h2>
+    {% endif %}
+    {% if segnalazione.stato == "CREATO_IN_REDMINE" %}
+        <h2 align="center" class="display-5">La segnalazione è confermata. Gli aggiornamenti rilevanti verranno inviati all'indirizzo di email indicato in fase di inserimento.</h2>
+    {% endif %}
+    {% include "segnala/_segnalazione.hmtl" with segnalazione=segnalazione %}
     <script>
         var timer = setTimeout(function() {
-            window.location='https://segnala.comune.calci.pi.it'
-        }, 10000);
+            window.location='/'
+        }, 30000);
     </script>
 {% endblock %}
 {% comment %}

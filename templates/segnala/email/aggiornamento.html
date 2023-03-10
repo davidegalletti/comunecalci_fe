@@ -10,4 +10,7 @@
 <p></p>
 <p>{{ notifica.testo_da_inviare }}</p>
 <p></p>
+<p>Puoi rileggere la segnalazione completa con tutti gli aggiornamenti
+    <a href="{{ http_host }}{% url "v" segnalazione.id segnalazione.token_validazione %}">facendo clic qui</a>.</p>
+<p></p>
 <p>Cordiali saluti</p>
