@@ -37,7 +37,7 @@ $(document).ready(function () {
       case "20":
         controls.forEach(hideControl);
         $('input[type=submit]').hide();
-        if (this.value==="1") helpCategoria.html('Per queste segnalazioni chiamare il numero 800889333 ( sempre attivo )');
+        if (this.value==="1") helpCategoria.html('Per queste segnalazioni chiamare il numero 800088911 ( sempre attivo )');
         if (this.value==="2") helpCategoria.html('Per queste segnalazioni chiamare il numero 800959095 - tasto 2 (attivo dalle 8:30 alle 17:00 lun-ven)');
         if (this.value==="3") helpCategoria.html('Per queste segnalzioni chiamare il numero 800983389 ( da fisso e mobile sempre attivo )');
         if (this.value==="20") helpCategoria.html('Per le richieste relative ai servizi cimiteriali, contattare la società Fegatilli SRL e Ponteverde Coperativa sociale 3367383551 - Apertura al pubblico il Lun-Ver ore 09:00-13:00 e 15:00-18:00.');
