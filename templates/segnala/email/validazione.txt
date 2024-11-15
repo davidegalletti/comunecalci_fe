@@ -6,7 +6,7 @@ Se non hai fatto tu la segnalazione ignora questo messaggio.
 
 Per registrare la segnalazione conferma il tuo indirizzo di e-mail usando il seguente collegamento:
 
-https://{% url "v" segnalazione.id segnalazione.token_validazione %}
+https://{{ http_host }}{% url "v" segnalazione.id segnalazione.token_validazione %}
 
 Ti ricordiamo che potrai seguire l'iter della segnalazioni utilizzando lo stesso link.
 
