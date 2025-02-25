@@ -211,4 +211,4 @@ LOGGING = {
     }
 }
 
-VERSIONE = '0.4.8'
+VERSIONE = '0.4.9'
