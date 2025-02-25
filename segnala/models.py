@@ -176,7 +176,7 @@ class Segnalazione(TimeStampedModel):
 
     @property
     def foto_url(self):
-        return '%s%s?id=%s&t=%s' % (settings.HTTP_HOST, reverse('i'), self.id, self.token_foto)
+        return 'https://%s%s?id=%s&t=%s' % (settings.HTTP_HOST, reverse('i'), self.id, self.token_foto)
 
     @classmethod
     def cron_notifiche_validazione(cls):
